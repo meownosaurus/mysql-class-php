@@ -13,7 +13,7 @@ Usage
 	$db = new connectDB("localhost","username","password","database",$error_reporting=false,$persistent=false);
   
 	//Query the database now the connection has been made
-	$db->query("SELECT * FROM ") or die($db->error());
+	$db->query("SELECT * FROM table") or die($db->error());
  
 	//You have several options on ways of fetching the data
 	//as an example I shall use
