@@ -1,22 +1,47 @@
 <?php
-Class connectDB {
+/*
+//Simply include this file on your page
+require_once("MySQL.class.php");
 
-	private $host = '';
-	private $user = '';
-	private $password = '';
-	private $database = '';
+//Set up all yor paramaters for connection
+$db = new connectDB("localhost","username","password","database",$error_reporting=false,$persistent=false);
+  
+//Query the database now the connection has been made
+$db->query("SELECT * FROM table") or die($db->error());
+ 
+//You have several options on ways of fetching the data
+//as an example I shall use
+while($row=$db->fetch_array()) {
+//do some stuff
+}
+*/
+Class connectDB {
+	/* 
+	 * Create variables for credentials to MySQL database
+	 * The variables have been declared as private. This
+	 * means that they will only be available with the 
+	 * Database class
+	 */
+	private $db_host = "";  // Change as required
+	private $db_user = "";  // Change as required
+	private $db_pass = "";  // Change as required
+	private $db_name = "";	// Change as required
 	private $persistent = false;
 	private $error_reporting = false;
+	
+	/*
+	 * Extra variables that are required by other function such as boolean con variable
+	 */
 	var $link = null;
 	var $result= false;
 
  
-	/*constructor function this will run when we call the class */
-	function connectDB ($host, $user, $password, $database, $error_reporting=true, $persistent=false) {
-		$this->host = $host;
-		$this->user = $user;
-		$this->password = $password;
-		$this->database = $database;
+	/*Constructor function this will run when we call the class */
+	function connectDB($db_host, $db_user, $db_pass, $db_name, $error_reporting=true, $persistent=false) {
+		$this->db_host = $db_host;
+		$this->db_user = $db_user;
+		$this->db_pass = $db_pass;
+		$this->db_name = $db_name;
 		$this->persistent = $persistent;
 		$this->error_reporting = $error_reporting;
 	}
@@ -29,24 +54,26 @@ Class connectDB {
 			$func = 'mysql_connect'; 
 		}
 		/* Connect to the MySQl Server */
-		$this->link = $func($this->host, $this->user, $this->password);
+		$this->link = $func($this->db_host, $this->db_user, $this->db_pass);
 		if (!$this->link) {
 			return false;
 		}
 		/* Select the requested DB */
-		if (@!mysql_select_db($this->database, $this->link)) {
+		if (@!mysql_select_db($this->db_name, $this->link)) {
 			return false;
 		}
-		mysql_query($charset) or die('Invalid query: ' . mysql_error());
+		@mysql_query("set character_set_results='utf8'");
+		@mysql_query("set character_set_client='utf8'");
+		@mysql_query("set character_set_connection='utf8'");
 		return true;
 	}
  
-	/*close the connection */
+	/* Close the connection */
 	private function disconnect() {
 		return (@mysql_close($this->link));
 	}
  
-	/* report error if error_reporting set to true */
+	/* Report error if error_reporting set to true */
 	public function error() {
 		self::connect();
 		if ($this->error_reporting) {
