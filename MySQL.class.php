@@ -152,7 +152,7 @@ Class connectDB {
 		}
 		return $string;
 		self::disconnect();
-   }
+	}
 
 }
 ?>
