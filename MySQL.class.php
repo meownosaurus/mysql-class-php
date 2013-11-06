@@ -1,4 +1,10 @@
 <?php
+# Connect MySQL Database Class
+# @package 
+# @since 2.5
+# @version 0.3
+# @link http://github.com/meownosaurus/mysql-class-php
+
 /*
 //Simply include this file on your page
 require_once("MySQL.class.php");
@@ -16,71 +22,79 @@ while($row=$db->fetch_array()) {
 }
 */
 Class connectDB {
-	/* 
-	 * Create variables for credentials to MySQL database
-	 * The variables have been declared as private. This
-	 * means that they will only be available with the 
-	 * Database class
-	 */
+	
+	# Base variables for credentials to MySQL database
+	# The variables have been declared as private. This
+	# means that they will only be available with the 
+	# Database class
 	private $db_host = "";  // Change as required
 	private $db_user = "";  // Change as required
 	private $db_pass = "";  // Change as required
 	private $db_name = "";	// Change as required
 	private $persistent = false;
-	private $error_reporting = false;
 	
-	/*
-	 * Extra variables that are required by other function such as boolean con variable
-	 */
+	# Extra variables that are required by other function such as boolean con variable
 	var $link = null;
 	var $result= false;
+	var $error = null;
 
  
 	/*Constructor function this will run when we call the class */
-	function connectDB($db_host, $db_user, $db_pass, $db_name, $error_reporting=true, $persistent=false) {
+	function connectDB ($db_host='localhost', $db_user, $db_pass, $db_name, $persistent=false) {
 		$this->db_host = $db_host;
 		$this->db_user = $db_user;
 		$this->db_pass = $db_pass;
 		$this->db_name = $db_name;
 		$this->persistent = $persistent;
-		$this->error_reporting = $error_reporting;
 	}
- 
+
+ 	# ===================================
+	# Private Functions
+	# ===================================
+
+	// Connects class to database
 	private function connect() {
-		$charset = "SET NAMES UTF8";
-		if ($this->persistent) {
-			$func = 'mysql_pconnect';
-		} else {
-			$func = 'mysql_connect'; 
-		}
 		/* Connect to the MySQl Server */
-		$this->link = $func($this->db_host, $this->db_user, $this->db_pass);
+		if ($this->persistent) {
+			$this->link = mysql_pconnect($this->db_host, $this->db_user, $this->db_pass);
+		} else {
+			$this->link = mysql_connect($this->db_host, $this->db_user, $this->db_pass);
+		}
 		if (!$this->link) {
+			$this->error = 'Could not connect to server: ' . mysql_error($this->link);
 			return false;
 		}
+
 		/* Select the requested DB */
 		if (@!mysql_select_db($this->db_name, $this->link)) {
+			$this->error = 'Could not connect to database: ' . mysql_error($this->link);
 			return false;
 		}
-		@mysql_query("set character_set_results='utf8'");
-		@mysql_query("set character_set_client='utf8'");
-		@mysql_query("set character_set_connection='utf8'");
+		mysql_query("SET character_set_results='utf8'");
+		mysql_query("SET character_set_client='utf8'");
+		mysql_query("SET character_set_connection='utf8'");
 		return true;
 	}
  
 	/* Close the connection */
 	private function disconnect() {
-		return (@mysql_close($this->link));
+		if($this->link){
+			return (@mysql_close($this->link));
+		}
 	}
- 
+
 	/* Report error if error_reporting set to true */
-	public function error() {
+	private function error() {
 		self::connect();
 		if ($this->error_reporting) {
 			return (mysql_error()) ;
 		}
 		self::disconnect();
 	}
+
+ 	# ===================================
+	# Public Functions
+	# ===================================
 
 	public function query($sql) {
 		self::connect();
@@ -127,7 +141,7 @@ Class connectDB {
 
 	public function insert_id() {
 		self::connect();
-		return(@mysql_insert_id($this->link));
+		return(@mysql_insert_id());
 		self::disconnect();
 	}
 
@@ -152,7 +166,7 @@ Class connectDB {
 		}
 		return $string;
 		self::disconnect();
-	}
+   }
 
 }
 ?>
