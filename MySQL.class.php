@@ -1,36 +1,20 @@
 <?php
-# Connect MySQL Database Class
+# MySQL Class PHPs
 # @package 
 # @since 2.5
 # @version 0.3
 # @link http://github.com/meownosaurus/mysql-class-php
 
-/*
-//Simply include this file on your page
-require_once("MySQL.class.php");
-
-//Set up all yor paramaters for connection
-$db = new connectDB("localhost","username","password","database",$error_reporting=false,$persistent=false);
-  
-//Query the database now the connection has been made
-$db->query("SELECT * FROM table") or die($db->error());
- 
-//You have several options on ways of fetching the data
-//as an example I shall use
-while($row=$db->fetch_array()) {
-//do some stuff
-}
-*/
 Class connectDB {
 	
 	# Base variables for credentials to MySQL database
 	# The variables have been declared as private. This
 	# means that they will only be available with the 
 	# Database class
-	private $db_host = "";  // Change as required
-	private $db_user = "";  // Change as required
-	private $db_pass = "";  // Change as required
-	private $db_name = "";	// Change as required
+	private $db_host = ""; // Change as required
+	private $db_user = ""; // Change as required
+	private $db_pass = ""; // Change as required
+	private $db_name = ""; // Change as required
 	private $persistent = false;
 	
 	# Extra variables that are required by other function such as boolean con variable
