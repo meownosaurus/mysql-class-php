@@ -1,5 +1,5 @@
 <?php
-# MySQL Class PHPs
+# MySQL Class PHP
 # @package 
 # @since 2.5
 # @version 0.3
@@ -22,7 +22,6 @@ Class connectDB {
 	var $result= false;
 	var $error = null;
 
- 
 	/*Constructor function this will run when we call the class */
 	function connectDB ($db_host='localhost', $db_user, $db_pass, $db_name, $persistent=false) {
 		$this->db_host = $db_host;
